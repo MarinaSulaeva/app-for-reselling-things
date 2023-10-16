@@ -11,8 +11,9 @@ import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.service.UserService;
 
-//@CrossOrigin(value = "http://localhost:3000")
+
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
@@ -25,8 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public User getInformation(Authentication authentication) {
-        AdsUserDetails userDetails = (AdsUserDetails) authentication.getPrincipal();
+    public User getInformation() {
         return userService.getInformation();
     }
 
