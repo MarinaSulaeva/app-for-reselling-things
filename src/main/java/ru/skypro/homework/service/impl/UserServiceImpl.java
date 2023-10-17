@@ -6,12 +6,13 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.Users;
+import ru.skypro.homework.exceptions.WrongCurrentPasswordException;
 import ru.skypro.homework.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private Users users = new Users(1,
+    private final Users users = new Users(1,
             "user@gmail.com",
             "path-for-image",
             "user@gmail.com",
@@ -24,10 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(NewPassword newPassword) {
-        if (newPassword.getCurrentPassword().equals(users.getPassword())) {
-            users.setPassword(newPassword.getNewPassword());
-        } else {
-            throw new IllegalArgumentException("неверный пароль");
+        if (!newPassword.getCurrentPassword().equals(users.getPassword())) {
+            throw new WrongCurrentPasswordException();
         }
     }
 
@@ -38,14 +37,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UpdateUser updateInformationAboutUser(UpdateUser updateUser) {
-        users.setFirstName(updateUser.getFirstName());
-        users.setLastName(updateUser.getLastName());
-        users.setPhone(updateUser.getPhone());
-        return updateUser;
+        return UpdateUser.toUpdateUser(users);
     }
 
     @Override
     public void UpdateImage(String image) {
-        users.setImage(image);
+//        users.setImage(image);
     }
 }

@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.AdsUserDetails;
-import ru.skypro.homework.dto.NewPassword;
-import ru.skypro.homework.dto.UpdateUser;
-import ru.skypro.homework.dto.User;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.UserService;
 
 
@@ -36,8 +33,8 @@ public class UserController {
     }
 
     @PatchMapping("/me/image")
-    public void updateImage(String image) {
-        userService.UpdateImage(image);
+    public void updateImage(UpdateImage image) {
+        userService.UpdateImage(image.getNewImage());
     }
 
 
