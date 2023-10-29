@@ -24,11 +24,11 @@ public class ExtendedAd {
     public static ExtendedAd fromAd(Ad ad){
         ExtendedAd extendedAd = new ExtendedAd();
         extendedAd.setPk(ad.getPk());
-        extendedAd.setAuthorFirstName(ad.getUser().getFirstName());
-        extendedAd.setAuthorLastName(ad.getUser().getLastName());
+        extendedAd.setAuthorFirstName(ad.getAuthor().getFirstName());
+        extendedAd.setAuthorLastName(ad.getAuthor().getLastName());
         extendedAd.setDescription(ad.getDescription());
-        extendedAd.setEmail(ad.getUser().getUsername());
-        extendedAd.setPhone(ad.getUser().getPhone());
+        extendedAd.setEmail(ad.getAuthor().getUsername());
+        extendedAd.setPhone(ad.getAuthor().getPhone());
         extendedAd.setTitle(ad.getTitle());
         extendedAd.setPrice(ad.getPrice());
         extendedAd.setImage(ad.getImage());

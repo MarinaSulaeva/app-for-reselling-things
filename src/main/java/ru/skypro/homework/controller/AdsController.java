@@ -12,8 +12,11 @@ import ru.skypro.homework.dto.ads.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ads.ExtendedAd;
 import ru.skypro.homework.service.AdsService;
 
+import java.io.IOException;
+
 @Slf4j
-@CrossOrigin(value = "http://localhost:3000")
+@CrossOrigin()
+//@CrossOrigin(value = "http://localhost:3000")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/ads")
@@ -29,10 +32,10 @@ public class AdsController {
 
     /** Добавление объявления */
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public AdDTO addAd(@RequestParam("properties") CreateOrUpdateAd createAd,
-                       @RequestParam("image") MultipartFile image,
-                       Authentication authentication){
-        return adsService.addAd(createAd, image, authentication.getName());
+    public AdDTO addAd(@RequestPart("properties") CreateOrUpdateAd properties,
+                       @RequestPart("image") MultipartFile image,
+                       Authentication authentication) throws IOException {
+        return adsService.addAd(properties, image, authentication.getName());
 
     }
 

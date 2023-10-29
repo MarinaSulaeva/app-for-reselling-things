@@ -23,7 +23,7 @@ public class Comment {
 
     @ManyToOne  (fetch = FetchType.EAGER)
     @JoinColumn (name = "author_id")
-    private Users users;
+    private Users author;
 
     @ManyToOne  (fetch = FetchType.EAGER)
     @JoinColumn (name = "ad_id")

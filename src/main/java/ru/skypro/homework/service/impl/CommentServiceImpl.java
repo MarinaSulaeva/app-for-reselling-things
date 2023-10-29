@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(UserNotFoundException::new);
         Comment newComment = new Comment();
 
-        newComment.setUsers(meUsers);
+        newComment.setAuthor(meUsers);
         newComment.setAd(getAd);
         newComment.setText(createOrUpdateComment.getText());
         newComment.setCreatedAt(LocalDateTime.now());
@@ -83,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
         if (!adId.equals(findComment.getAd().getPk())) {
             throw new CommentNotFoundException();
         } else {
-            if (isAdminOrOwnerComment(authentication, findComment.getUsers().getUsername())) {
+            if (isAdminOrOwnerComment(authentication, findComment.getAuthor().getUsername())) {
                 commentRepository.delete(findComment);
             }
             else {
@@ -99,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
             throw new CommentNotFoundException();
         } else {
 
-            if (isAdminOrOwnerComment(authentication, findComment.getUsers().getUsername())) {
+            if (isAdminOrOwnerComment(authentication, findComment.getAuthor().getUsername())) {
                 findComment.setText(createOrUpdateComment.getText());
                 findComment.setCreatedAt(LocalDateTime.now());
                 commentRepository.save(findComment);

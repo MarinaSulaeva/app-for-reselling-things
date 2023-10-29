@@ -20,7 +20,7 @@ public class AdDTO {
     public static AdDTO fromAd(Ad ad){
         AdDTO adDTO = new AdDTO();
         adDTO.setPk(ad.getPk());
-        adDTO.setAuthor(ad.getUser().getId());
+        adDTO.setAuthor(ad.getAuthor().getId());
         adDTO.setTitle(ad.getTitle());
         adDTO.setPrice(ad.getPrice());
         adDTO.setImage(ad.getImage());
@@ -30,7 +30,7 @@ public class AdDTO {
     public Ad toAd(Users user){
         Ad ad = new Ad();
         ad.setPk(this.getPk());
-        ad.setUser(user);
+        ad.setAuthor(user);
         ad.setTitle(this.getTitle());
         ad.setPrice(this.getPrice());
         ad.setImage(this.getImage());

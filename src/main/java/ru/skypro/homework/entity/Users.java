@@ -42,7 +42,7 @@ public class Users {
     @Enumerated
     private Role role;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "users")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     private List<Comment> commentList;
 
 }

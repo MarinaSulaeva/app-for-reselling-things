@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,10 +69,31 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public AdDTO addAd(CreateOrUpdateAd createAd, MultipartFile image, String username) {
+    public AdDTO addAd(CreateOrUpdateAd properties, MultipartFile image, String username) throws IOException {
         Users user = usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        Ad ad = createAd.toAd(user);
+        Ad ad = properties.toAd(user);
+        ad.setAuthor(user);
+        adsRepository.save(ad);
+        List<String> SUPPORTED_EXTENSIONS = Arrays.asList("png", "jpg", "jpeg");
+        String filename = image.getOriginalFilename();
+        String type = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        //проверка, что переданный файл - изображение
+//        if (!SUPPORTED_EXTENSIONS.contains(type)) {
+//            throw new UnsupportedFormatException();
+//        }
+        byte[] newImage = image.getBytes();
+
+        String pathString = "C:\\Users\\anna\\Pictures\\ads_image"  + image.getOriginalFilename().toLowerCase().replaceAll(" ", "-") + "." + type;
+        Path uploadDir = Paths.get("C:\\Users\\anna\\Pictures\\ads_image");
+        //проверка, что директория существует, если нет - создает ее
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+        File fileImage = new File(pathString);
+        Files.write(Paths.get(pathString), newImage);
+        ad.setImage(fileImage.getPath());
+        Ad newAd = adsRepository.save(ad);
 
 //        File uploadDir = new File(appProperties.getUploadPath());
 //        // Если директория uploads не существует, то создаем ее
@@ -91,24 +113,24 @@ public class AdsServiceImpl implements AdsService {
 //                "image_" + curDate + "_" + image.getOriginalFilename().toLowerCase().replaceAll(" ", "-");
 //        String filePath = directory + "/" + fileName;
 
-        String uploadDir = "C:/Users/anna/Pictures/ads_image";
-        File directory = new File(uploadDir);
-
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
-        String curDate = LocalDateTime.now().toString();
-        String fileName = "image_" + curDate + "_" + image.getOriginalFilename().toLowerCase().replaceAll(" ", "-");
-        String filePath = directory + "/" + fileName + "." + "PNG";
-        File newImage = new File(filePath);
-
-        try {
-//            image.transferTo(new File(filePath));
-            Files.write(Paths.get(filePath), image.getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        String uploadDir = "C:/Users/anna/Pictures/ads_image";
+//        File directory = new File(uploadDir);
+//
+//        if (!directory.exists()) {
+//            directory.mkdirs();
+//        }
+//
+//        String curDate = LocalDateTime.now().toString();
+//        String fileName = "image_" + curDate + "_" + image.getOriginalFilename().toLowerCase().replaceAll(" ", "-");
+//        String filePath = directory + "/" + fileName + "." + "PNG";
+//        File newImage = new File(filePath);
+//
+//        try {
+////            image.transferTo(new File(filePath));
+//            Files.write(Paths.get(filePath), image.getBytes());
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
 //
 //        // Сохраняем файл на файловой системе
@@ -116,16 +138,9 @@ public class AdsServiceImpl implements AdsService {
 //        fos.write(file.getBytes());
 //        fos.close();
 
-//        File file;
-//        try {
-//            file = image.getResource().getFile();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        String filePath = file.getPath();
-
-        ad.setImage(newImage.getPath());
-        Ad newAd = adsRepository.save(ad);
+//        ad.setImage(newImage.getPath());
+//        Ad newAd = adsRepository.save(ad);
+//        adsRepository.save(ad);
 
         return AdDTO.fromAd(newAd);
     }
@@ -143,7 +158,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public void removeAd(int id, Authentication authentication) {
         Ad deletedAd = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
-        if (isAdminOrOwnerAd(authentication, deletedAd.getUser().getUsername())) {
+        if (isAdminOrOwnerAd(authentication, deletedAd.getAuthor().getUsername())) {
             adsRepository.delete(deletedAd);
         } else {
             throw new AccessErrorException();
@@ -153,7 +168,7 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdDTO updateAds(int id, CreateOrUpdateAd updateAd, Authentication authentication) {
         Ad updatedAd = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
-        if (isAdminOrOwnerAd(authentication, updatedAd.getUser().getUsername())) {
+        if (isAdminOrOwnerAd(authentication, updatedAd.getAuthor().getUsername())) {
             updatedAd.setTitle(updateAd.getTitle());
             updatedAd.setPrice(updateAd.getPrice());
             updatedAd.setDescription(updateAd.getDescription());

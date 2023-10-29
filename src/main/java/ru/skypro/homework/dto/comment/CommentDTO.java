@@ -21,9 +21,9 @@ public class CommentDTO {
     public static CommentDTO fromComment(Comment comment) {
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setPk(comment.getPk());
-        commentDTO.setAuthor(comment.getUsers().getId());
-        commentDTO.setAuthorImage(comment.getUsers().getImage());
-        commentDTO.setAuthorFirstName(comment.getUsers().getFirstName());
+        commentDTO.setAuthor(comment.getAuthor().getId());
+        commentDTO.setAuthorImage(comment.getAuthor().getImage());
+        commentDTO.setAuthorFirstName(comment.getAuthor().getFirstName());
         commentDTO.setCreatedAt(comment.getCreatedAt());
         commentDTO.setText(comment.getText());
         return commentDTO;

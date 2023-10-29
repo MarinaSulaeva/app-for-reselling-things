@@ -25,7 +25,7 @@ public class CreateOrUpdateAd {
 
     public Ad toAd(Users user){
         Ad ad = new Ad();
-        ad.setUser(user);
+        ad.setAuthor(user);
         ad.setTitle(this.getTitle());
         ad.setPrice(this.getPrice());
         return ad;
