@@ -3,6 +3,7 @@ package ru.skypro.homework.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,16 +27,16 @@ public class AdsController {
 
     /** Получение всех объявлений  */
     @GetMapping()
-    public Ads getAllAds(){
-        return adsService.getAllAds();
+    public ResponseEntity<Ads> getAllAds(){
+        return ResponseEntity.ok(adsService.getAllAds());
     }
 
     /** Добавление объявления */
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public AdDTO addAd(@RequestPart("properties") CreateOrUpdateAd properties,
+    public void addAd(@RequestPart("properties") CreateOrUpdateAd properties,
                        @RequestPart("image") MultipartFile image,
                        Authentication authentication) throws IOException {
-        return adsService.addAd(properties, image, authentication.getName());
+        adsService.addAd(properties, image, authentication.getName());
 
     }
 

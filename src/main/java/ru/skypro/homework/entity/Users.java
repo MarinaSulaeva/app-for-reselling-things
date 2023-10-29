@@ -42,6 +42,9 @@ public class Users {
     @Enumerated
     private Role role;
 
+    @OneToMany(mappedBy="author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Ad> adsList;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     private List<Comment> commentList;
 

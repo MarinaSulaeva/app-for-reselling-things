@@ -4,17 +4,22 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import ru.skypro.homework.entity.Users;
 
 
 import java.util.*;
 
-@Getter
+//@Getter
+@Component
 public class AdsUserDetails implements UserDetails {
 
-    private final UsersDTO usersDTO;
+    private UsersDTO usersDTO;
 
-    public AdsUserDetails(UsersDTO usersDTO) {
+//    public AdsUserDetails(UsersDTO usersDTO) {
+//        this.usersDTO = usersDTO;
+//    }
+    public void setUsersDTO(UsersDTO usersDTO) {
         this.usersDTO = usersDTO;
     }
 
@@ -70,6 +75,7 @@ public class AdsUserDetails implements UserDetails {
                 usersDTO.getLastName(),
                 usersDTO.getPhone(),
                 usersDTO.getRole(),
+                new ArrayList<>(),
                 new ArrayList<>());
     }
 

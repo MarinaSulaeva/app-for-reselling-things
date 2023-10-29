@@ -31,7 +31,7 @@ public class ExtendedAd {
         extendedAd.setPhone(ad.getAuthor().getPhone());
         extendedAd.setTitle(ad.getTitle());
         extendedAd.setPrice(ad.getPrice());
-        extendedAd.setImage(ad.getImage());
+        extendedAd.setImage(ad.getImage().getPath());
         return extendedAd;
     }
 

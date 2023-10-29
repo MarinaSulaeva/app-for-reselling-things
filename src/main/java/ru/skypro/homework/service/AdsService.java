@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public interface AdsService {
     Ads getAllAds();
-    AdDTO addAd(CreateOrUpdateAd properties, MultipartFile image, String username) throws IOException;
+    void addAd(CreateOrUpdateAd properties, MultipartFile image, String username) throws IOException;
 
     ExtendedAd getAds(int id, Authentication authentication);
 

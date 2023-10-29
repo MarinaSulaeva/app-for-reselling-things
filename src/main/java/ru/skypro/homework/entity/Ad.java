@@ -62,10 +62,11 @@ public class Ad {
     @Column(name = "price", nullable = false)
     private int price; //цена объявления
 
-    @Column(name = "image")
-    private String image; //  путь к картинке объявления
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image; //  путь к картинке объявления
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private Users author; //id автора объявления
 

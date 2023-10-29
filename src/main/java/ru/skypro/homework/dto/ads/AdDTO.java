@@ -23,17 +23,17 @@ public class AdDTO {
         adDTO.setAuthor(ad.getAuthor().getId());
         adDTO.setTitle(ad.getTitle());
         adDTO.setPrice(ad.getPrice());
-        adDTO.setImage(ad.getImage());
+        adDTO.setImage(ad.getImage().getPath());
         return adDTO;
     }
 
-    public Ad toAd(Users user){
-        Ad ad = new Ad();
-        ad.setPk(this.getPk());
-        ad.setAuthor(user);
-        ad.setTitle(this.getTitle());
-        ad.setPrice(this.getPrice());
-        ad.setImage(this.getImage());
-        return ad;
-    }
+//    public Ad toAd(){
+//        Ad ad = new Ad();
+//        ad.setPk(this.getPk());
+//        ad.setAuthor(this.);
+//        ad.setTitle(this.getTitle());
+//        ad.setPrice(this.getPrice());
+//        ad.setImage(this.getImage());
+//        return ad;
+//    }
 }

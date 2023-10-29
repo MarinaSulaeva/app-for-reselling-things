@@ -9,6 +9,7 @@ import ru.skypro.homework.dto.ads.Ads;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ads.ExtendedAd;
 import ru.skypro.homework.entity.Ad;
+import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.Users;
 import ru.skypro.homework.exceptions.AccessErrorException;
 import ru.skypro.homework.exceptions.AdNotFoundException;
@@ -69,31 +70,40 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public AdDTO addAd(CreateOrUpdateAd properties, MultipartFile image, String username) throws IOException {
-        Users user = usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+    public void addAd(CreateOrUpdateAd properties, MultipartFile image, String username) throws IOException {
 
-        Ad ad = properties.toAd(user);
-        ad.setAuthor(user);
+       Ad ad = new Ad();
+        ad.setImage(new Image("Test")); // временно
+        ad.setPrice(properties.getPrice());
+        ad.setTitle(properties.getTitle());
+        ad.setDescription(properties.getDescription());
+        ad.setAuthor(usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new));
         adsRepository.save(ad);
-        List<String> SUPPORTED_EXTENSIONS = Arrays.asList("png", "jpg", "jpeg");
-        String filename = image.getOriginalFilename();
-        String type = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-        //проверка, что переданный файл - изображение
-//        if (!SUPPORTED_EXTENSIONS.contains(type)) {
-//            throw new UnsupportedFormatException();
+//        public AdDTO addAd(CreateOrUpdateAd properties, MultipartFile image, String username) throws IOException {
+//        Users user = usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+//
+//        Ad ad = properties.toAd();
+//        ad.setAuthor(user);
+//        adsRepository.save(ad);
+//        List<String> SUPPORTED_EXTENSIONS = Arrays.asList("png", "jpg", "jpeg");
+//        String filename = image.getOriginalFilename();
+//        String type = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+//        //проверка, что переданный файл - изображение
+////        if (!SUPPORTED_EXTENSIONS.contains(type)) {
+////            throw new UnsupportedFormatException();
+////        }
+//        byte[] newImage = image.getBytes();
+//
+//        String pathString = "C:\\Users\\anna\\Pictures\\ads_image"  + image.getOriginalFilename().toLowerCase().replaceAll(" ", "-") + "." + type;
+//        Path uploadDir = Paths.get("C:\\Users\\anna\\Pictures\\ads_image");
+//        //проверка, что директория существует, если нет - создает ее
+//        if (!Files.exists(uploadDir)) {
+//            Files.createDirectories(uploadDir);
 //        }
-        byte[] newImage = image.getBytes();
-
-        String pathString = "C:\\Users\\anna\\Pictures\\ads_image"  + image.getOriginalFilename().toLowerCase().replaceAll(" ", "-") + "." + type;
-        Path uploadDir = Paths.get("C:\\Users\\anna\\Pictures\\ads_image");
-        //проверка, что директория существует, если нет - создает ее
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
-        File fileImage = new File(pathString);
-        Files.write(Paths.get(pathString), newImage);
-        ad.setImage(fileImage.getPath());
-        Ad newAd = adsRepository.save(ad);
+//        File fileImage = new File(pathString);
+//        Files.write(Paths.get(pathString), newImage);
+//        ad.setImage(fileImage.getPath());
+//        Ad newAd = adsRepository.save(ad);
 
 //        File uploadDir = new File(appProperties.getUploadPath());
 //        // Если директория uploads не существует, то создаем ее
@@ -142,7 +152,7 @@ public class AdsServiceImpl implements AdsService {
 //        Ad newAd = adsRepository.save(ad);
 //        adsRepository.save(ad);
 
-        return AdDTO.fromAd(newAd);
+//        return AdDTO.fromAd(newAd);
     }
 
     @Override

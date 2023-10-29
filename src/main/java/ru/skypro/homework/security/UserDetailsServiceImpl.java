@@ -13,17 +13,30 @@ import ru.skypro.homework.repository.UsersRepository;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UsersRepository usersRepository;
+    private final AdsUserDetails adsUserDetails;
 
 
-    public UserDetailsServiceImpl(UsersRepository usersRepository) {
+    public UserDetailsServiceImpl(UsersRepository usersRepository, AdsUserDetails adsUserDetails) {
         this.usersRepository = usersRepository;
+        this.adsUserDetails = adsUserDetails;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UsersDTO usersDTO = UsersDTO.fromUsers(usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new));
-        return new AdsUserDetails(usersDTO);
+        adsUserDetails.setUsersDTO(usersDTO);
+//        return new AdsUserDetails(usersDTO);
+        return adsUserDetails;
     }
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        AppUserDTO userDTO = AppUserDTO.fromAppUser(appUserRepository.findAppUserByUsername(username));
+//        if (userDTO == null) {
+//            throw new UsernameNotFoundException(username);
+//        }
+//
+//        appUserDetails.setUserDetails(userDTO);
+//        return appUserDetails;
+//    }
 
     public boolean userExists(String username) {
         Users userNotExists = new Users();

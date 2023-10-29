@@ -29,8 +29,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: image
-                  type: varchar
+                  name: image_id
+                  type: integer
               - column:
                   name: user_id
                   type: integer

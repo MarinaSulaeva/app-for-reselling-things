@@ -23,9 +23,8 @@ public class CreateOrUpdateAd {
     @Size(min = 8, max = 64)
     private String description;
 
-    public Ad toAd(Users user){
+    public Ad toAd(){
         Ad ad = new Ad();
-        ad.setAuthor(user);
         ad.setTitle(this.getTitle());
         ad.setPrice(this.getPrice());
         return ad;
