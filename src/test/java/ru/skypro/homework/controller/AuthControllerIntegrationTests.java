@@ -70,7 +70,7 @@ public class AuthControllerIntegrationTests {
                 "$2a$10$mShIMZIKnJ.EVqUycC2OE.qunAUqKJPFZq6ADSuJ.IYmVWBmXqWMi",
                 "ivan",
                 "ivanov",
-                "+7 777-77-77",
+                "+7(777)777-77-77",
                 Role.USER);
         usersRepository.save(user);
     }
@@ -113,6 +113,54 @@ public class AuthControllerIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(register.toString()))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void register_status_isNotValid_password() throws Exception {
+        usersRepository.deleteAll();
+        JSONObject register = new JSONObject();
+        register.put("username", "user@gmail.com");
+        register.put("password", "passwordddddddddddddd");
+        register.put("firstName", "user");
+        register.put("lastName", "userovich");
+        register.put("phone", "+7(777)777-77-77");
+        register.put("role", Role.USER);
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(register.toString()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void register_status_isNotValid_username() throws Exception {
+        usersRepository.deleteAll();
+        JSONObject register = new JSONObject();
+        register.put("username", "user@gmail.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+        register.put("password", "password");
+        register.put("firstName", "user");
+        register.put("lastName", "userovich");
+        register.put("phone", "+7(777)777-77-77");
+        register.put("role", Role.USER);
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(register.toString()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void register_status_isNotValid_firstname() throws Exception {
+        usersRepository.deleteAll();
+        JSONObject register = new JSONObject();
+        register.put("username", "user@gmail.commmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+        register.put("password", "password");
+        register.put("firstName", "user");
+        register.put("lastName", "userovich");
+        register.put("phone", "+7(777)777-77-77");
+        register.put("role", Role.USER);
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(register.toString()))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

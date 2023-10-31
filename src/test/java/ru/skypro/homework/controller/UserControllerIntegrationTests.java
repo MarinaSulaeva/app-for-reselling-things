@@ -89,7 +89,7 @@ public class UserControllerIntegrationTests {
                 "$2a$10$mShIMZIKnJ.EVqUycC2OE.qunAUqKJPFZq6ADSuJ.IYmVWBmXqWMi",
                 "ivan",
                 "ivanov",
-                "+7 777-77-77",
+                "+7(777)777-77-77",
                 Role.USER);
         usersRepository.save(user);
     }
@@ -189,11 +189,25 @@ public class UserControllerIntegrationTests {
         JSONObject updateUser = new JSONObject();
         updateUser.put("firstName", "ivan");
         updateUser.put("lastName", "ivanova");
-        updateUser.put("phone", "+7(777)-777-77-77");
+        updateUser.put("phone", "+7(777)777-77-77");
         mockMvc.perform(patch("/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateUser.toString()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
+    public void updateInformationAboutUser_status_isNotValid() throws Exception {
+        addToDb();
+        JSONObject updateUser = new JSONObject();
+        updateUser.put("firstName", "ivan");
+        updateUser.put("lastName", "ivanova");
+        updateUser.put("phone", "+7(777)-777-77-77");
+        mockMvc.perform(patch("/users/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateUser.toString()))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
