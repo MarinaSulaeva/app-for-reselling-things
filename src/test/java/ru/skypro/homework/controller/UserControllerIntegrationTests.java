@@ -132,6 +132,19 @@ public class UserControllerIntegrationTests {
     }
 
     @Test
+    public void setPassword_status_NotValid() throws Exception {
+        addToDb();
+        JSONObject newPassword = new JSONObject();
+        newPassword.put("currentPassword", "password");
+        newPassword.put("newPassword", "passwordpasswordpasswordpassword");
+        mockMvc.perform(post("/users/set_password")
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded("user@gmail.com", "password"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newPassword.toString()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
     public void setPassword_status_isForbidden() throws Exception {
         addToDb();

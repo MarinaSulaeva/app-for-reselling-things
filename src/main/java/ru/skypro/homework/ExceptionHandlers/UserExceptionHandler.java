@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.skypro.homework.exceptions.NotValidDataException;
 import ru.skypro.homework.exceptions.UserNotFoundException;
 import ru.skypro.homework.exceptions.WrongCurrentPasswordException;
 
@@ -19,5 +20,11 @@ public class UserExceptionHandler {
     public ResponseEntity<?> handleUserNotFound(UserNotFoundException exception) {
         String message = "Пользователь не найден";
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {NotValidDataException.class})
+    public ResponseEntity<?> handleNotValidData(NotValidDataException exception) {
+        String message = "Введите корректные данные";
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

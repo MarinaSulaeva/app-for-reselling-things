@@ -6,9 +6,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.user.*;
+import ru.skypro.homework.exceptions.NotValidDataException;
 import ru.skypro.homework.service.UserService;
 
 import javax.validation.Valid;
@@ -24,7 +26,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/set_password")
-    public void updatePassword(@RequestBody @Valid NewPassword newPassword, Authentication authentication) {
+    public void updatePassword(@RequestBody @Valid NewPassword newPassword, BindingResult bindingResult,
+                               Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            throw new NotValidDataException();
+        }
         userService.updatePassword(newPassword, authentication.getName());
     }
 
@@ -34,7 +40,12 @@ public class UserController {
     }
 
     @PatchMapping("/me")
-    public UpdateUser updateInformationAboutUser(@RequestBody @Valid UpdateUser updateUser, Authentication authentication) {
+    public UpdateUser updateInformationAboutUser(@RequestBody @Valid UpdateUser updateUser,
+                                                 BindingResult bindingResult,
+                                                 Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            throw new NotValidDataException();
+        }
         return userService.updateInformationAboutUser(updateUser, authentication.getName());
     }
 

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 @Data
@@ -14,6 +16,6 @@ public class NewPassword {
 
     @Size(message = "введите от 8 до 16 символов", min = 8, max = 16)
     private String currentPassword;
-    @Size(message = "введите от 8 до 16 символов", min = 8, max = 16)
+    @Size(min = 8, max = 16)
     private String newPassword;
 }
