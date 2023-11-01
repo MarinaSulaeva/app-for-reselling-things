@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Users;
 
+import java.util.Optional;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,11 +29,12 @@ public class ExtendedAd {
         extendedAd.setAuthorFirstName(ad.getUser().getFirstName());
         extendedAd.setAuthorLastName(ad.getUser().getLastName());
         extendedAd.setDescription(ad.getDescription());
-        extendedAd.setEmail(ad.getUser().getEmail());
+        extendedAd.setEmail(ad.getUser().getUsername());
         extendedAd.setPhone(ad.getUser().getPhone());
         extendedAd.setTitle(ad.getTitle());
         extendedAd.setPrice(ad.getPrice());
-        extendedAd.setImage(ad.getImage());
+        Optional.ofNullable(ad.getImage()).ifPresent(image -> extendedAd.setImage(
+                "/ads/" + ad.getImage().getId() + "/image"));
         return extendedAd;
     }
 

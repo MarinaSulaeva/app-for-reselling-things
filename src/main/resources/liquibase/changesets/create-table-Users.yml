@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: 3
       author: Marina
       changes:
         - createTable:
@@ -14,16 +14,11 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: email
+                  name: image_id
                   type: varchar(255)
                   constraints:
-                    nullable: false
-                    unique: true
-              - column:
-                  name: image
-                  type: varchar(255)
-                  constraints:
-                    nullable: false
+                    foreignKeyName: image_id
+                    references: image(id)
               - column:
                   name: username
                   type: varchar(32)
@@ -32,7 +27,7 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: password
-                  type: varchar(16)
+                  type: varchar(255)
                   constraints:
                     nullable: false
               - column:
