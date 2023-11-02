@@ -281,14 +281,14 @@ public class CommentControllerTests_ForUserRole {
         comment.put("text", COMMENT6_FOR_AD_2);
 
         //пробуем изменить существующий комментарий из объявления 1
-        mockMvc.perform(put("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1)
+        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(comment.toString()))
                 .andExpect(status().isOk());
 
         //пробуем изменить несуществующий комментарий из объявления 1
-        mockMvc.perform(put("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1+1)
+        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1+1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(comment.toString()))
@@ -307,7 +307,7 @@ public class CommentControllerTests_ForUserRole {
         comment.put("text", COMMENT6_FOR_AD_2);
 
         //пробуем изменить чужой комментарий из объявления 1
-        mockMvc.perform(put("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1)
+        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(comment.toString()))
