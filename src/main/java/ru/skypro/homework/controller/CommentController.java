@@ -50,7 +50,8 @@ public class CommentController {
     }
 
     //Обновление комментария
-    @PutMapping("/{adId}/comments/{commentId}")
+//    @PutMapping("/{adId}/comments/{commentId}")
+    @PatchMapping("/{adId}/comments/{commentId}")
     public void updateComment(@PathVariable("adId") Integer adId,
                               @PathVariable("commentId") Integer commentId,
                               @RequestBody CreateOrUpdateComment createOrUpdateComment,
