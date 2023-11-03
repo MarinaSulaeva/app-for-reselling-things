@@ -4,10 +4,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ads.AdDTO;
-import ru.skypro.homework.dto.ads.Ads;
-import ru.skypro.homework.dto.ads.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ads.ExtendedAd;
+import ru.skypro.homework.dto.ads.*;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.ImageAd;
 
@@ -27,7 +24,7 @@ public interface AdsService {
     Ads getAdsMe(Authentication authentication);
 
 //    @PreAuthorize("principal.admin or #username == authentication.principal.username")
-    ImageAd updateImage(int id, MultipartFile image, Authentication authentication);
+    ImageAdDTO updateImage(int id, MultipartFile image, Authentication authentication);
 
     byte [] getImage (String id);
 

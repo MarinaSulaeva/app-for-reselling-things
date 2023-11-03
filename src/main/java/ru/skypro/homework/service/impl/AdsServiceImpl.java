@@ -4,10 +4,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ads.AdDTO;
-import ru.skypro.homework.dto.ads.Ads;
-import ru.skypro.homework.dto.ads.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ads.ExtendedAd;
+import ru.skypro.homework.dto.ads.*;
+import ru.skypro.homework.dto.user.ImageDTO;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.ImageAd;
@@ -155,7 +153,7 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public ImageAd updateImage(int id, MultipartFile file, Authentication authentication) {
+    public ImageAdDTO updateImage(int id, MultipartFile file, Authentication authentication) {
 
         Ad ad = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
 
@@ -177,7 +175,7 @@ public class AdsServiceImpl implements AdsService {
         ad.setImage(image);
         adsRepository.save((ad));
 
-        return returnImage;
+        return ImageAdDTO.fromImageAd(returnImage);
 
         } else {
             throw new AccessErrorException();
