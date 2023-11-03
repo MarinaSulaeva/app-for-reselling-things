@@ -5,6 +5,11 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Класс-обертка для получения списка комментариев к объявлению и их количества
+ * @author Морозова Светлана
+ */
+
 @Data
 @AllArgsConstructor
 public class Comments {

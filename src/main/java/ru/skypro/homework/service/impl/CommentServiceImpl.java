@@ -24,6 +24,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Класс, содержащий методы получения, добавления, изменения, удаления комментариев к объявлениям
+ *
+ * @author Морозова Светлана
+ */
+
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -38,6 +44,9 @@ public class CommentServiceImpl implements CommentService {
         this.usersRepository = usersRepository;
     }
 
+    /**
+     * Внутренний метод класса, проверяющий право пользователя на изменение или удаление комментария
+     */
     private boolean isAdminOrOwnerComment(Authentication authentication, String ownerComment) {
         boolean isAdmin = authentication.getAuthorities()
                 .stream()
@@ -51,63 +60,95 @@ public class CommentServiceImpl implements CommentService {
 
     }
 
+    /**
+     * Публичный метод получения всех комментариев объявления и их количества
+     */
     @Override
-    public Comments getComments(Integer adId) {
-        List<CommentDTO> commentDTOList = commentRepository.findAllCommentsByAdId(adId)
-                .stream()
-                .map(CommentDTO::fromComment)
-                .collect(Collectors.toList());
-        return new Comments(commentDTOList.size(), commentDTOList);
-    }
-
-    @Override
-    public void addComment(Integer id, CreateOrUpdateComment createOrUpdateComment, Authentication authentication) {
-        String username = authentication.getName();
-
-        Ad getAd = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
-        Users meUsers = usersRepository.findByUsername(username)
-                .orElseThrow(UserNotFoundException::new);
-        Comment newComment = new Comment();
-
-        newComment.setUsers(meUsers);
-        newComment.setAd(getAd);
-        newComment.setText(createOrUpdateComment.getText());
-        newComment.setCreatedAt(LocalDateTime.now());
-
-        commentRepository.save(newComment);
-    }
-
-    @Override
-    public void deleteComment(Integer adId, Integer commentId, Authentication authentication) {
-        Comment findComment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
-        if (!adId.equals(findComment.getAd().getPk())) {
-            throw new CommentNotFoundException();
+    public Comments getComments(Integer adId, Authentication authentication) {
+        if (authentication.isAuthenticated()) {
+            List<CommentDTO> commentDTOList = commentRepository.findAllCommentsByAdId(adId)
+                    .stream()
+                    .map(CommentDTO::fromComment)
+                    .collect(Collectors.toList());
+            return new Comments(commentDTOList.size(), commentDTOList);
         } else {
-            if (isAdminOrOwnerComment(authentication, findComment.getUsers().getUsername())) {
-                commentRepository.delete(findComment);
-            }
-            else {
-                throw new AccessErrorException();
-            }
+            throw new AccessErrorException();
+        }
+
+    }
+
+    /**
+     * Публичный метод добавления комментария к объявлению
+     */
+    @Override
+    public CommentDTO addComment(Integer id, CreateOrUpdateComment createOrUpdateComment, Authentication authentication) {
+
+        if (authentication.isAuthenticated()) {
+            String username = authentication.getName();
+
+            Ad getAd = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
+            Users meUsers = usersRepository.findByUsername(username)
+                    .orElseThrow(UserNotFoundException::new);
+            Comment newComment = new Comment();
+
+            newComment.setUsers(meUsers);
+            newComment.setAd(getAd);
+            newComment.setText(createOrUpdateComment.getText());
+            newComment.setCreatedAt(LocalDateTime.now());
+
+            CommentDTO commentDTO = CommentDTO.fromComment(commentRepository.save(newComment));
+
+            return commentDTO;
+        } else {
+            throw new AccessErrorException();
         }
     }
 
+    /**
+     * Публичный метод удаления комментария к объявлению, доступен только автору комментария и администратору
+     */
     @Override
-    public void updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment, Authentication authentication) {
-        Comment findComment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
-        if (!adId.equals(findComment.getAd().getPk())) {
-            throw new CommentNotFoundException();
+    public void deleteComment(Integer adId, Integer commentId, Authentication authentication) {
+        if (authentication.isAuthenticated()) {
+            Comment findComment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+            if (!adId.equals(findComment.getAd().getPk())) {
+                throw new CommentNotFoundException();
+            } else {
+                if (isAdminOrOwnerComment(authentication, findComment.getUsers().getUsername())) {
+                    commentRepository.delete(findComment);
+                } else {
+                    throw new AccessErrorException();
+                }
+            }
         } else {
+            throw new AccessErrorException();
+        }
+    }
 
-            if (isAdminOrOwnerComment(authentication, findComment.getUsers().getUsername())) {
-                findComment.setText(createOrUpdateComment.getText());
-                findComment.setCreatedAt(LocalDateTime.now());
-                commentRepository.save(findComment);
-            }
-            else {
-                throw new AccessErrorException();
-            }
+    /**
+     * Публичный метод изменения комментария к объявлению, доступен только автору комментария и администратору
+     */
+    @Override
+    public CommentDTO updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment, Authentication authentication) {
+        if (authentication.isAuthenticated()) {
+            Comment findComment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+            if (!adId.equals(findComment.getAd().getPk())) {
+                throw new CommentNotFoundException();
+            } else {
 
+                if (isAdminOrOwnerComment(authentication, findComment.getUsers().getUsername())) {
+                    findComment.setText(createOrUpdateComment.getText());
+                    findComment.setCreatedAt(LocalDateTime.now());
+
+                    CommentDTO commentDTO = CommentDTO.fromComment(commentRepository.save(findComment));
+                    return commentDTO;
+                } else {
+                    throw new AccessErrorException();
+                }
+
+            }
+        } else {
+            throw new AccessErrorException();
         }
     }
 }
