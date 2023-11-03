@@ -230,6 +230,32 @@ public class CommentControllerTests_ForUserRole {
     }
 
     @Test
+    void addComment_notValid() throws Exception {
+        String base64Encoded = autorisationUser(USERNAME_USER2, PASSWORD_USER2);
+
+        JSONObject commentMoreThan64 = new JSONObject();
+        commentMoreThan64.put("text", "this is text exceeding 64 characters, this is text exceeding 64 characters");
+
+        JSONObject commentLessThan8 = new JSONObject();
+        commentLessThan8.put("text", "1234567");
+
+        int adId2 = commentRepository.findLastAdId();
+
+        mockMvc.perform(post("/ads/{id}/comments", adId2)
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(commentMoreThan64.toString()))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/ads/{id}/comments", adId2)
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(commentLessThan8.toString()))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
     void deleteComment() throws Exception {
         String base64Encoded = autorisationUser(USERNAME_USER1, PASSWORD_USER1);
 
@@ -295,6 +321,32 @@ public class CommentControllerTests_ForUserRole {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+     void updateComment_notValid() throws Exception {
+
+        String base64Encoded = autorisationUser(USERNAME_USER1, PASSWORD_USER1);
+
+        int adId1 = commentRepository.findLastAdId()-1;
+        int lastCommentByAd1 = commentRepository.findLastCommentId(adId1);
+
+        JSONObject commentMoreThan64 = new JSONObject();
+        commentMoreThan64.put("text", "this is text exceeding 64 characters, this is text exceeding 64 characters");
+
+        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1)
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(commentMoreThan64.toString()))
+                .andExpect(status().isBadRequest());
+
+        JSONObject commentLessThan8 = new JSONObject();
+        commentLessThan8.put("text", "1234567");
+
+        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1)
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(commentLessThan8.toString()))
+                .andExpect(status().isBadRequest());
+    }
 
     @Test
     void updateComment_userWithoutAccess() throws Exception {

@@ -8,6 +8,11 @@ import ru.skypro.homework.entity.Comment;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Класс-обертка для получения комментария к объявлению
+ * @author Морозова Светлана
+ */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
