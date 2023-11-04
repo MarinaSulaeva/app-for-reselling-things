@@ -15,6 +15,7 @@ import ru.skypro.homework.entity.Users;
 import ru.skypro.homework.exceptions.AccessErrorException;
 import ru.skypro.homework.exceptions.AdNotFoundException;
 import ru.skypro.homework.exceptions.UserNotFoundException;
+import ru.skypro.homework.exceptions.UserUnauthorizedException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImageAdRepository;
 import ru.skypro.homework.repository.ImageRepository;
@@ -31,6 +32,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Класс, содержащий методы получения, добавления, изменения, удаления объявлений
+ * @author Sayfullina Anna
+ * @author Морозова Светлана
+ */
 @Service
 public class AdsServiceImpl implements AdsService {
 
@@ -57,7 +63,16 @@ public class AdsServiceImpl implements AdsService {
         boolean isOwnerAd = authentication.getName().equals(ownerAd);
 
         return isAdmin || isOwnerAd;
+    }
 
+    private boolean isUser(Authentication authentication) {
+        boolean isUser = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList())
+                .contains("ROLE_USER");
+
+        return isUser;
     }
 
     private Users userMe(Authentication authentication) {
@@ -79,10 +94,10 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdDTO addAd(CreateOrUpdateAd properties, MultipartFile file, Authentication authentication) {
 
+        if (authentication.isAuthenticated()) {
+
         String username = authentication.getName();
         Users user = usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
-
-        if (authentication.isAuthenticated()) {
 
         Ad ad = properties.toAd();
         ad.setUser(user);

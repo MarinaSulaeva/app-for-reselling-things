@@ -7,13 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,6 +37,7 @@ import ru.skypro.homework.service.AdsService;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -84,6 +89,8 @@ public class AdsControllerTests {
     @BeforeEach
     public void cleanData(){
         adsRepository.deleteAll();
+        usersRepository.deleteAll();
+        imageAdRepository.deleteAll();
     }
 
     @Test
@@ -186,49 +193,48 @@ public class AdsControllerTests {
     @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
     void addAdTest_OK() throws Exception {
 
-//        "author": 0,
-//                "image": "string",
-//                "pk": 0,
-//                "price": 0,
-//                "title": "string"
+        addEntityToDatabase();
+
+        JSONObject newAd = createJSONObjectUpdateAd();
+        String json = newAd.toString();
+
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
+
+        MockPart properties = new MockPart("properties", json.getBytes());
+        properties.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+
+        int id = usersRepository.findByUsername("user@gmail.com").get().getId();
+
+        mockMvc.perform(multipart("/ads")
+                        .part(mockPart, properties))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pk").isNotEmpty())
+                .andExpect(jsonPath("$.pk").isNumber())
+                .andExpect(jsonPath("$.author").value(id));
+    }
+
+    //не работает тест, выкидывает NullPointerException:
+    // Cannot invoke "org.springframework.security.core.Authentication.getAuthorities()" because "authentication" is null
+    @Test
+    void addAdTest_Unauthorized() throws Exception {
 
         addEntityToDatabase();
 
-        JSONObject newAd = new JSONObject();
-        newAd.put("price", 5000);
-        newAd.put("title", "something");
-        newAd.put("description", "very useful");
+        JSONObject newAd = createJSONObjectUpdateAd();
+        String json = newAd.toString();
 
-        MockMultipartFile file = new MockMultipartFile(
-                "imageAd",
-                "imageForAd.png",
-                MediaType.IMAGE_PNG_VALUE,
-                Files.readAllBytes(Paths.get("imageAd_test/imageAd1.png"))
-        );
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
 
+        MockPart properties = new MockPart("properties", json.getBytes());
+        properties.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
-//        JSONObject newAd = new JSONObject();
-//        newAd.put("author", 1);
-//        newAd.put("image",Paths.get("imageAd_test/imageAd1.png"));
-//        newAd.put("pk", 3);
-//        newAd.put("price", 5000);
-//        newAd.put("title", "something");
-
-
-//        mockMvc.perform(post("/ads")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(newAd.toString()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").isNotEmpty())
-//                .andExpect(jsonPath("$.id").isNumber())
-//                .andExpect(jsonPath("$.name").value("test_name"));
-//
-//
-//        mockMvc.perform(get("/employees/all"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").isArray())
-//                .andExpect(jsonPath("$.length()").value(1))
-//                .andExpect(jsonPath("$[0].name").value("test_name"));
+        mockMvc.perform(multipart("/ads")
+                        .part(mockPart, properties))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -392,33 +398,113 @@ public class AdsControllerTests {
         addEntityToDatabase();
         int id = adsRepository.findAdByTitle("product1").get().getPk();
 
-        MockMultipartFile file = new MockMultipartFile(
-                "imageAd",
-                "imageForAd.png",
-                MediaType.IMAGE_PNG_VALUE,
-                Files.readAllBytes(Paths.get("imageAd_test/imageAd_test.png"))
-        );
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
 
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-                .multipart("/ads/{id}/image", id)
-                .file(file)
-                .accept(MediaType.MULTIPART_FORM_DATA_VALUE)
-                .with(csrf());
-        mockMvc.perform(builder.with(request -> {
-                    request.setMethod("PATCH");
-                    return request;
-                }))
+        mockMvc.perform(multipart("/ads/{id}/image", id)
+                        .part(mockPart)
+                        .accept(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with((request -> {
+                            request.setMethod("PATCH");
+                            return request;
+                        })))
                 .andExpect(status().isOk());
-
-
     }
 
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN", password = "password")
+    void  updateImageTest_Ok_Admin() throws Exception {
+        addEntityToDatabase();
+        addAdminInRepository();
+        int id = adsRepository.findAdByTitle("product1").get().getPk();
 
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
 
+        mockMvc.perform(multipart("/ads/{id}/image", id)
+                        .part(mockPart)
+                        .accept(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with((request -> {
+                            request.setMethod("PATCH");
+                            return request;
+                        })))
+                .andExpect(status().isOk());
+    }
 
+    @Test
+    @WithMockUser(username = "user1@gmail.com", roles = "USER", password = "password")
+    void  updateImageTest_Ok_Forbidden() throws Exception {
+        addEntityToDatabase();
+        addUserInRepository();
+        int id = adsRepository.findAdByTitle("product1").get().getPk();
 
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
 
+        mockMvc.perform(multipart("/ads/{id}/image", id)
+                        .part(mockPart)
+                        .accept(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with((request -> {
+                            request.setMethod("PATCH");
+                            return request;
+                        })))
+                .andExpect(status().isForbidden());
+    }
 
+    @Test
+    void  updateImageTest_Unauthorized() throws Exception {
+        addEntityToDatabase();
+        int id = adsRepository.findAdByTitle("product1").get().getPk();
 
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
+
+        mockMvc.perform(multipart("/ads/{id}/image", id)
+                        .part(mockPart)
+                        .accept(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with((request -> {
+                            request.setMethod("PATCH");
+                            return request;
+                        })))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
+    void  updateImageTest_Not_Found() throws Exception {
+        addEntityToDatabase();
+        int id = 1000;
+
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
+
+        mockMvc.perform(multipart("/ads/{id}/image", id)
+                        .part(mockPart)
+                        .accept(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .with((request -> {
+                            request.setMethod("PATCH");
+                            return request;
+                        })))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
+    void  getImageTest() throws Exception {
+        addEntityToDatabase();
+        Ad ad = adsRepository.findAdByTitle("product1").get();
+
+        MvcResult result = mockMvc.perform(get("/ads/{id}/image", ad.getPk()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        byte[] resourceContent = result.getResponse().getContentAsByteArray();
+        assertThat(resourceContent).isNotEmpty();
+    }
 
 }

@@ -8,6 +8,10 @@ import ru.skypro.homework.entity.Users;
 
 import java.util.Optional;
 
+/**
+ * Класс-обертка для получения полной информации об объявлении
+ * @author Sayfullina Anna
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

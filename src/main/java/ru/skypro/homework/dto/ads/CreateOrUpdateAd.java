@@ -9,6 +9,10 @@ import ru.skypro.homework.entity.Users;
 
 import javax.validation.constraints.Size;
 
+/**
+ * Класс-обертка для добавления и/или обновления объявления с валидацией
+ * @author Sayfullina Anna
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
