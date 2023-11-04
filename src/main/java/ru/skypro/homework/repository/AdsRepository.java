@@ -24,8 +24,8 @@ public interface AdsRepository extends CrudRepository<Ad, Integer> {
 
     Optional<Ad> findAdByPk(int pk);
 
-//    @Query("SELECT new ru.skypro.homework.dto.ads" +
-//            ".Ads(SELECT * FROM Ad a WHERE a.user.id = :userId)")
-//    Ads findAdsByAuthorizedUser(int userId);
+    Optional<Ad> findAdByTitle(String title);
+
+
 
 }

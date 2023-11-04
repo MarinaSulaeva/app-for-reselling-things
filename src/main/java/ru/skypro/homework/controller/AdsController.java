@@ -46,9 +46,8 @@ public class AdsController {
 
     /**  Удаление объявления */
     @DeleteMapping("/{id}")
-    public void removeAd (@PathVariable int id, Authentication authentication){
-        adsService.removeAd(id, authentication);
-
+    public ResponseEntity<Void> removeAd (@PathVariable int id, Authentication authentication){
+        return adsService.removeAd(id, authentication);
     }
 
     /** Обновление информации об объявлении  */

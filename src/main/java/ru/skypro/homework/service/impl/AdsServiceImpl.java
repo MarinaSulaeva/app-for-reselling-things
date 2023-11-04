@@ -1,5 +1,7 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -118,10 +120,11 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public void removeAd(int id, Authentication authentication) {
+    public ResponseEntity<Void> removeAd(int id, Authentication authentication) {
         Ad deletedAd = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
         if (isAdminOrOwnerAd(authentication, deletedAd.getUser().getUsername())) {
             adsRepository.delete(deletedAd);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             throw new AccessErrorException();
         }
