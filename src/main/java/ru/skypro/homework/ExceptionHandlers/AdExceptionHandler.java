@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.skypro.homework.exceptions.AdNoContentException;
 import ru.skypro.homework.exceptions.AdNotFoundException;
-import ru.skypro.homework.exceptions.CommentNotFoundException;
 import ru.skypro.homework.exceptions.UserUnauthorizedException;
 
 @ControllerAdvice

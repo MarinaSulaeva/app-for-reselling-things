@@ -10,23 +10,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.containers.PostgreSQLContainer;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.Ad;
-import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.ImageAd;
 import ru.skypro.homework.entity.Users;
 import ru.skypro.homework.repository.AdsRepository;
@@ -37,17 +31,13 @@ import ru.skypro.homework.service.AdsService;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,7 +59,6 @@ public class AdsControllerTests {
     private UsersRepository usersRepository;
     @Autowired
     private ImageRepository imageRepository;
-
 
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
@@ -167,9 +156,17 @@ public class AdsControllerTests {
     private JSONObject createJSONObjectUpdateAd() throws JSONException {
         JSONObject updateAd = new JSONObject();
         updateAd.put("title", "product10");
-        updateAd.put("price", "300000");
+        updateAd.put("price", 300000);
         updateAd.put("description", "very useful for you");
        return updateAd;
+    }
+
+    private JSONObject createJSONObjectAdNotValid() throws JSONException {
+        JSONObject updateAd = new JSONObject();
+        updateAd.put("title", "pro");
+        updateAd.put("price", 100000000);
+        updateAd.put("description", "useful");
+        return updateAd;
     }
 
 
@@ -187,6 +184,29 @@ public class AdsControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.count").value(2))
                 .andExpect(jsonPath("$.results").isNotEmpty());
+    }
+
+    @Test
+    @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
+    void addAdTest_IsNotValid() throws Exception {
+
+        addEntityToDatabase();
+
+        JSONObject newAd = createJSONObjectAdNotValid();
+        String json = newAd.toString();
+
+        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
+        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
+        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
+
+        MockPart properties = new MockPart("properties", json.getBytes());
+        properties.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+
+        int id = usersRepository.findByUsername("user@gmail.com").get().getId();
+
+        mockMvc.perform(multipart("/ads")
+                        .part(mockPart, properties))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -213,28 +233,6 @@ public class AdsControllerTests {
                 .andExpect(jsonPath("$.pk").isNotEmpty())
                 .andExpect(jsonPath("$.pk").isNumber())
                 .andExpect(jsonPath("$.author").value(id));
-    }
-
-    //не работает тест, выкидывает NullPointerException:
-    // Cannot invoke "org.springframework.security.core.Authentication.getAuthorities()" because "authentication" is null
-    @Test
-    void addAdTest_Unauthorized() throws Exception {
-
-        addEntityToDatabase();
-
-        JSONObject newAd = createJSONObjectUpdateAd();
-        String json = newAd.toString();
-
-        ClassPathResource classPathResource = new ClassPathResource("imageAd_test.png");
-        MockPart mockPart = new MockPart("image", "imageAd_test.png", classPathResource.getInputStream().readAllBytes());
-        mockPart.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
-
-        MockPart properties = new MockPart("properties", json.getBytes());
-        properties.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-
-        mockMvc.perform(multipart("/ads")
-                        .part(mockPart, properties))
-                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -325,6 +323,22 @@ public class AdsControllerTests {
         mockMvc.perform(get("/ads/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("product10"));
+    }
+    @Test
+    @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
+    public void updateAdsTest_isNotValid() throws Exception {
+        addEntityToDatabase();
+        int id = adsRepository.findAdByTitle("product1").get().getPk();
+        JSONObject updateAd = createJSONObjectAdNotValid();
+
+        mockMvc.perform(patch("/ads/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateAd.toString()))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(get("/ads/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("product1"));
     }
 
     @Test

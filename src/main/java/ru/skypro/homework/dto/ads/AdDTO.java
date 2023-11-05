@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.Ad;
-import ru.skypro.homework.entity.Users;
 
 import java.util.Optional;
 
