@@ -8,6 +8,10 @@ import javax.persistence.*;
 
 import java.util.List;
 
+/**
+ * Класс-сущность с данными объявления в базе данных
+ * @author Sayfullina Anna
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,27 +22,27 @@ public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ad_id",nullable = false)
-    private Integer pk; //id объявления
+    private Integer pk;
 
     @Column(name = "title", nullable = false)
-    private String title; //заголовок объявления
+    private String title;
 
     @Column(name="description")
-    private String description; // описание объявления
+    private String description;
 
     @Column(name = "price", nullable = false)
-    private int price; //цена объявления
+    private int price;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "image_ad_id")
-    private ImageAd image; //  путь к картинке объявления
+    private ImageAd image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private Users user; //id автора объявления
+    private Users user;
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Comment> comments; //комментарии к объявлению
+    private List<Comment> comments;
 
 
 

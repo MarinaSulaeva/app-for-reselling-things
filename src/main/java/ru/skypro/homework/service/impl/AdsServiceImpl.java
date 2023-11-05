@@ -1,15 +1,13 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ads.AdDTO;
-import ru.skypro.homework.dto.ads.Ads;
-import ru.skypro.homework.dto.ads.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ads.ExtendedAd;
+import ru.skypro.homework.dto.ads.*;
 import ru.skypro.homework.entity.Ad;
-import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.ImageAd;
 import ru.skypro.homework.entity.Users;
 import ru.skypro.homework.exceptions.AccessErrorException;
@@ -17,20 +15,19 @@ import ru.skypro.homework.exceptions.AdNotFoundException;
 import ru.skypro.homework.exceptions.UserNotFoundException;
 import ru.skypro.homework.repository.AdsRepository;
 import ru.skypro.homework.repository.ImageAdRepository;
-import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UsersRepository;
 import ru.skypro.homework.service.AdsService;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Класс, содержащий методы получения, добавления, изменения, удаления объявлений
+ * @author Sayfullina Anna
+ * @author Морозова Светлана
+ */
 @Service
 public class AdsServiceImpl implements AdsService {
 
@@ -57,7 +54,16 @@ public class AdsServiceImpl implements AdsService {
         boolean isOwnerAd = authentication.getName().equals(ownerAd);
 
         return isAdmin || isOwnerAd;
+    }
 
+    private boolean isUser(Authentication authentication) {
+        boolean isUser = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList())
+                .contains("ROLE_USER");
+
+        return isUser;
     }
 
     private Users userMe(Authentication authentication) {
@@ -79,10 +85,10 @@ public class AdsServiceImpl implements AdsService {
     @Override
     public AdDTO addAd(CreateOrUpdateAd properties, MultipartFile file, Authentication authentication) {
 
+        if (authentication.isAuthenticated()) {
+
         String username = authentication.getName();
         Users user = usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
-
-        if (authentication.isAuthenticated()) {
 
         Ad ad = properties.toAd();
         ad.setUser(user);
@@ -120,10 +126,11 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public void removeAd(int id, Authentication authentication) {
+    public ResponseEntity<Void> removeAd(int id, Authentication authentication) {
         Ad deletedAd = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
         if (isAdminOrOwnerAd(authentication, deletedAd.getUser().getUsername())) {
             adsRepository.delete(deletedAd);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             throw new AccessErrorException();
         }
@@ -155,7 +162,7 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public ImageAd updateImage(int id, MultipartFile file, Authentication authentication) {
+    public ImageAdDTO updateImage(int id, MultipartFile file, Authentication authentication) {
 
         Ad ad = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
 
@@ -177,7 +184,7 @@ public class AdsServiceImpl implements AdsService {
         ad.setImage(image);
         adsRepository.save((ad));
 
-        return returnImage;
+        return ImageAdDTO.fromImageAd(returnImage);
 
         } else {
             throw new AccessErrorException();

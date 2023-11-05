@@ -13,7 +13,12 @@ import ru.skypro.homework.dto.ads.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ads.ExtendedAd;
 import ru.skypro.homework.service.AdsService;
 
-import java.io.IOException;
+import javax.validation.Valid;
+
+/**
+ * Класс-контроллер для запуска эндпоинтов, относящихся к объявлениям
+ * @author Sayfullina Anna
+ */
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -32,7 +37,7 @@ public class AdsController {
 
     /** Добавление объявления */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AdDTO> addAd(@RequestPart("properties") CreateOrUpdateAd properties,
+    public ResponseEntity<AdDTO> addAd(@RequestPart("properties") @Valid CreateOrUpdateAd properties,
                        @RequestPart("image") MultipartFile image,
                        Authentication authentication){
         return ResponseEntity.ok(adsService.addAd(properties, image, authentication));
@@ -46,15 +51,14 @@ public class AdsController {
 
     /**  Удаление объявления */
     @DeleteMapping("/{id}")
-    public void removeAd (@PathVariable int id, Authentication authentication){
-        adsService.removeAd(id, authentication);
-
+    public ResponseEntity<Void> removeAd (@PathVariable int id, Authentication authentication){
+        return adsService.removeAd(id, authentication);
     }
 
     /** Обновление информации об объявлении  */
     @PatchMapping("/{id}")
     public AdDTO updateAds(@PathVariable int id,
-                           @RequestBody CreateOrUpdateAd updateAd,
+                           @RequestBody @Valid CreateOrUpdateAd updateAd,
                            Authentication authentication){
         return adsService.updateAds(id, updateAd, authentication);
     }
@@ -74,7 +78,7 @@ public class AdsController {
         return ResponseEntity.ok().build();
     }
 
-
+    /**    Получение картинки объявления   */
     @GetMapping(value ="/{id}/image", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
     public byte [] getImage(@PathVariable("id") String id) {
         return adsService.getImage(id);
