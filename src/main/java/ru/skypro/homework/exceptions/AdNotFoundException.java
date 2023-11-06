@@ -1,4 +1,4 @@
 package ru.skypro.homework.exceptions;
 
-public class AdNotFoundException extends RuntimeException{
+public class AdNotFoundException extends RuntimeException {
 }

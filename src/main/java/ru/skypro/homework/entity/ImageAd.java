@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 /**
  * the class-entity for saving pictures from ads
+ *
  * @author Sulaeva Marina
  */
 @Entity
@@ -21,5 +22,5 @@ public class ImageAd {
     @Id
     private String id;
 
-    private byte [] image;
+    private byte[] image;
 }

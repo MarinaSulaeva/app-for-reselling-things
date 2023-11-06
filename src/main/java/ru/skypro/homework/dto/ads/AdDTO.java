@@ -9,6 +9,7 @@ import java.util.Optional;
 
 /**
  * Класс-обертка для получения объявления
+ *
  * @author Sayfullina Anna
  */
 @Data
@@ -21,7 +22,7 @@ public class AdDTO {
     private int price;
     private String image;
 
-    public static AdDTO fromAd(Ad ad){
+    public static AdDTO fromAd(Ad ad) {
         AdDTO adDTO = new AdDTO();
         adDTO.setPk(ad.getPk());
         adDTO.setAuthor(ad.getUser().getId());

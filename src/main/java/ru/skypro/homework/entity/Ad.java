@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Класс-сущность с данными объявления в базе данных
+ *
  * @author Sayfullina Anna
  */
 @Data
@@ -21,13 +22,13 @@ public class Ad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ad_id",nullable = false)
+    @Column(name = "ad_id", nullable = false)
     private Integer pk;
 
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
     @Column(name = "price", nullable = false)
@@ -43,10 +44,6 @@ public class Ad {
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Comment> comments;
-
-
-
-
 
 
 }

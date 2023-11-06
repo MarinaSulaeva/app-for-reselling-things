@@ -54,10 +54,15 @@ public class CommentControllerTests_ForAdminRole_and_Unautorized {
     @Autowired
     private AdsRepository adsRepository;
 
+//    @Container
+//    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+//            .withUsername("postgres")
+//            .withPassword("postgres");
+
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
             .withUsername("postgres")
-            .withPassword("postgres");
+            .withPassword("73aberiv");
 
     @DynamicPropertySource
     static void postgresProperties(DynamicPropertyRegistry registry) {
@@ -191,7 +196,7 @@ public class CommentControllerTests_ForAdminRole_and_Unautorized {
                 .andExpect(jsonPath("$.count").value(countCommentByAd2));
 
         //получение комментариев по несуществующему объявлению
-        mockMvc.perform(get("/ads/{id}/comments", adId2+1)
+        mockMvc.perform(get("/ads/{id}/comments", adId2 + 1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.count").value(0));
@@ -233,7 +238,7 @@ public class CommentControllerTests_ForAdminRole_and_Unautorized {
         mockMvc.perform(get("/ads/{id}/comments", adId2)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(countCommentByAd2+1));
+                .andExpect(jsonPath("$.count").value(countCommentByAd2 + 1));
 
     }
 
@@ -275,10 +280,10 @@ public class CommentControllerTests_ForAdminRole_and_Unautorized {
         mockMvc.perform(get("/ads/{id}/comments", adId2)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(countCommentByAd2-1));
+                .andExpect(jsonPath("$.count").value(countCommentByAd2 - 1));
 
         //пробуем удалить комментарий, не относящийся к объявлению 2
-        mockMvc.perform(delete("/ads/{adId}/comments/{commentId}", adId2, lastCommentByAd2+1)
+        mockMvc.perform(delete("/ads/{adId}/comments/{commentId}", adId2, lastCommentByAd2 + 1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isNotFound());
     }
@@ -298,7 +303,7 @@ public class CommentControllerTests_ForAdminRole_and_Unautorized {
     void updateComment() throws Exception {
         String base64Encoded = autorisationUser(USERNAME_ADMIN, PASSWORD_ADMIN);
 
-        int adId1 = commentRepository.findLastAdId()-1;
+        int adId1 = commentRepository.findLastAdId() - 1;
         int lastCommentByAd1 = commentRepository.findLastCommentId(adId1);
 
         JSONObject comment = new JSONObject();
@@ -312,7 +317,7 @@ public class CommentControllerTests_ForAdminRole_and_Unautorized {
                 .andExpect(status().isOk());
 
         //пробуем изменить несуществующий комментарий из объявления 1
-        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1+1)
+        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1 + 1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(comment.toString()))
@@ -323,7 +328,7 @@ public class CommentControllerTests_ForAdminRole_and_Unautorized {
     @Test
     void updateComment_unauthorizedUser() throws Exception {
 
-        int adId1 = commentRepository.findLastAdId()-1;
+        int adId1 = commentRepository.findLastAdId() - 1;
         int lastCommentByAd1 = commentRepository.findLastCommentId(adId1);
 
         JSONObject comment = new JSONObject();

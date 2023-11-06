@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.entity.ImageAd;
+
 /**
  * Класс-обертка для получения картинки объявления
+ *
  * @author Sayfullina Anna
  */
 @Data
@@ -15,9 +17,9 @@ import ru.skypro.homework.entity.ImageAd;
 public class ImageAdDTO {
 
     private String id;
-    private byte [] image;
+    private byte[] image;
 
-    public static ImageAdDTO fromImageAd (ImageAd image) {
+    public static ImageAdDTO fromImageAd(ImageAd image) {
         return new ImageAdDTO(image.getId(), image.getImage());
     }
 

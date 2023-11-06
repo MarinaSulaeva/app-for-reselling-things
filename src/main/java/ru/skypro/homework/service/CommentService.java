@@ -7,6 +7,7 @@ import ru.skypro.homework.dto.comment.CreateOrUpdateComment;
 
 /**
  * Интерфейс с методами получения, добавления, изменения, удаления комментариев к объявлениям
+ *
  * @author Морозова Светлана
  */
 
@@ -18,5 +19,5 @@ public interface CommentService {
 
     void deleteComment(Integer adId, Integer commentId, Authentication authentication);
 
-    CommentDTO updateComment(Integer adId, Integer commentId,CreateOrUpdateComment createOrUpdateComment, Authentication authentication);
+    CommentDTO updateComment(Integer adId, Integer commentId, CreateOrUpdateComment createOrUpdateComment, Authentication authentication);
 }

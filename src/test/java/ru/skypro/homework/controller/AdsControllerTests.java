@@ -60,10 +60,15 @@ public class AdsControllerTests {
     @Autowired
     private ImageRepository imageRepository;
 
+//    @Container
+//    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+//            .withUsername("postgres")
+//            .withPassword("Anna_098!");
+
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
             .withUsername("postgres")
-            .withPassword("Anna_098!");
+            .withPassword("73aberiv");
 
     @DynamicPropertySource
     static void postgresProperties(DynamicPropertyRegistry registry) {
@@ -76,7 +81,7 @@ public class AdsControllerTests {
     private DataSource dataSource;
 
     @BeforeEach
-    public void cleanData(){
+    public void cleanData() {
         adsRepository.deleteAll();
         usersRepository.deleteAll();
         imageAdRepository.deleteAll();
@@ -131,7 +136,7 @@ public class AdsControllerTests {
         adsRepository.save(ad1);
     }
 
-    private void addUserInRepository(){
+    private void addUserInRepository() {
         Users user = usersRepository.save(new Users(2,
                 null,
                 "user1@gmail.com",
@@ -142,7 +147,7 @@ public class AdsControllerTests {
                 Role.USER));
     }
 
-    private void addAdminInRepository(){
+    private void addAdminInRepository() {
         Users user = usersRepository.save(new Users(2,
                 null,
                 "admin@gmail.com",
@@ -158,7 +163,7 @@ public class AdsControllerTests {
         updateAd.put("title", "product10");
         updateAd.put("price", 300000);
         updateAd.put("description", "very useful for you");
-       return updateAd;
+        return updateAd;
     }
 
     private JSONObject createJSONObjectAdNotValid() throws JSONException {
@@ -168,7 +173,6 @@ public class AdsControllerTests {
         updateAd.put("description", "useful");
         return updateAd;
     }
-
 
 
     @Test
@@ -324,6 +328,7 @@ public class AdsControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("product10"));
     }
+
     @Test
     @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
     public void updateAdsTest_isNotValid() throws Exception {
@@ -377,6 +382,7 @@ public class AdsControllerTests {
                         .content(updateAd.toString()))
                 .andExpect(status().isUnauthorized());
     }
+
     @Test
     @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
     void updateAdsTest_isNotFound() throws Exception {
@@ -408,7 +414,7 @@ public class AdsControllerTests {
 
     @Test
     @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
-    void  updateImageTest_Ok() throws Exception {
+    void updateImageTest_Ok() throws Exception {
         addEntityToDatabase();
         int id = adsRepository.findAdByTitle("product1").get().getPk();
 
@@ -428,7 +434,7 @@ public class AdsControllerTests {
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN", password = "password")
-    void  updateImageTest_Ok_Admin() throws Exception {
+    void updateImageTest_Ok_Admin() throws Exception {
         addEntityToDatabase();
         addAdminInRepository();
         int id = adsRepository.findAdByTitle("product1").get().getPk();
@@ -449,7 +455,7 @@ public class AdsControllerTests {
 
     @Test
     @WithMockUser(username = "user1@gmail.com", roles = "USER", password = "password")
-    void  updateImageTest_Ok_Forbidden() throws Exception {
+    void updateImageTest_Ok_Forbidden() throws Exception {
         addEntityToDatabase();
         addUserInRepository();
         int id = adsRepository.findAdByTitle("product1").get().getPk();
@@ -469,7 +475,7 @@ public class AdsControllerTests {
     }
 
     @Test
-    void  updateImageTest_Unauthorized() throws Exception {
+    void updateImageTest_Unauthorized() throws Exception {
         addEntityToDatabase();
         int id = adsRepository.findAdByTitle("product1").get().getPk();
 
@@ -489,7 +495,7 @@ public class AdsControllerTests {
 
     @Test
     @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
-    void  updateImageTest_Not_Found() throws Exception {
+    void updateImageTest_Not_Found() throws Exception {
         addEntityToDatabase();
         int id = 1000;
 
@@ -509,7 +515,7 @@ public class AdsControllerTests {
 
     @Test
     @WithMockUser(username = "user@gmail.com", roles = "USER", password = "password")
-    void  getImageTest() throws Exception {
+    void getImageTest() throws Exception {
         addEntityToDatabase();
         Ad ad = adsRepository.findAdByTitle("product1").get();
 

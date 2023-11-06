@@ -12,8 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+
 /**
-*Spring Security module configuration class
+ * Spring Security module configuration class
  */
 @EnableWebSecurity
 @Configuration
@@ -33,7 +34,7 @@ public class WebSecurityConfig {
     };
 
     /**
-     *TThe bean for working with authentication using database
+     * TThe bean for working with authentication using database
      */
     @Bean
     public DaoAuthenticationProvider authProvider() {

@@ -10,6 +10,7 @@ import java.util.Optional;
 
 /**
  * Репозиторий для получения методов для работы с базой данных объявлений
+ *
  * @author Sayfullina Anna
  */
 @Repository
@@ -24,7 +25,6 @@ public interface AdsRepository extends CrudRepository<Ad, Integer> {
     Optional<Ad> findAdByPk(int pk);
 
     Optional<Ad> findAdByTitle(String title);
-
 
 
 }

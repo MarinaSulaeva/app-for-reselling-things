@@ -9,6 +9,7 @@ import java.util.Optional;
 
 /**
  * Класс-обертка для получения полной информации об объявлении
+ *
  * @author Sayfullina Anna
  */
 @Data
@@ -26,7 +27,7 @@ public class ExtendedAd {
     private int price;
     private String title;
 
-    public static ExtendedAd fromAd(Ad ad){
+    public static ExtendedAd fromAd(Ad ad) {
         ExtendedAd extendedAd = new ExtendedAd();
         extendedAd.setPk(ad.getPk());
         extendedAd.setAuthorFirstName(ad.getUser().getFirstName());
