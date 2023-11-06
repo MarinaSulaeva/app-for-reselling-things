@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 
 /**
  * Класс-обертка для добавления и/или обновления объявления с валидацией
+ *
  * @author Sayfullina Anna
  */
 @Data
@@ -27,7 +28,7 @@ public class CreateOrUpdateAd {
     @Size(min = 8, max = 64)
     private String description;
 
-    public Ad toAd(){
+    public Ad toAd() {
         Ad ad = new Ad();
         ad.setTitle(this.getTitle());
         ad.setPrice(this.getPrice());

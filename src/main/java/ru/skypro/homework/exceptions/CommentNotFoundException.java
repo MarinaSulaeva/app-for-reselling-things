@@ -1,4 +1,4 @@
 package ru.skypro.homework.exceptions;
 
-public class CommentNotFoundException extends RuntimeException{
+public class CommentNotFoundException extends RuntimeException {
 }

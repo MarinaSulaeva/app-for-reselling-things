@@ -115,6 +115,7 @@ public class AuthControllerIntegrationTests {
                         .content(register.toString()))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     public void register_status_isNotValid_firstname() throws Exception {
         usersRepository.deleteAll();
@@ -146,6 +147,7 @@ public class AuthControllerIntegrationTests {
                         .content(register.toString()))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     public void register_status_isNotValid_password() throws Exception {
         usersRepository.deleteAll();
@@ -161,6 +163,7 @@ public class AuthControllerIntegrationTests {
                         .content(register.toString()))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     public void register_status_isNotValid_lastname() throws Exception {
         usersRepository.deleteAll();

@@ -15,6 +15,7 @@ import javax.validation.Valid;
 
 /**
  * The class-controller for running user's endpoints
+ *
  * @author Sulaeva Marina
  */
 @Slf4j
@@ -33,6 +34,7 @@ public class UserController {
     public void updatePassword(@RequestBody @Valid NewPassword newPassword, Authentication authentication) {
         userService.updatePassword(newPassword, authentication.getName());
     }
+
     /**
      * The method for getting information about profile for registered users
      */
@@ -53,18 +55,18 @@ public class UserController {
      * The method for updating image in profile for registered users
      */
     @PatchMapping("/me/image")
-    public ResponseEntity<byte []> updateImage(@RequestPart MultipartFile image, Authentication authentication) {
+    public ResponseEntity<byte[]> updateImage(@RequestPart MultipartFile image, Authentication authentication) {
         userService.updateImage(image, authentication.getName());
         return ResponseEntity.ok().build();
     }
+
     /**
      * The method to output on display image in profile for registered users
      */
-    @GetMapping(value ="/{id}/image", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
-    public byte [] getImage(@PathVariable("id") String id) {
+    @GetMapping(value = "/{id}/image", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
+    public byte[] getImage(@PathVariable("id") String id) {
         return userService.getImage(id);
     }
-
 
 
 }

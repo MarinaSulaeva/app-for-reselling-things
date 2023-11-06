@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Репозиторий для получения методов для работы с базой данных комментариев
+ *
  * @author Морозова Светлана
  */
 
@@ -23,6 +24,7 @@ public interface CommentRepository extends CrudRepository<Comment, Integer> {
             "WHERE ad_id = :AdId",
             nativeQuery = true)
     Integer countCommentsByAdId(Integer AdId);
+
     @Query(value = "SELECT MAX(comment_id) FROM comments " +
             "WHERE ad_id = :AdId",
             nativeQuery = true)

@@ -7,6 +7,7 @@ import ru.skypro.homework.dto.ads.*;
 
 /**
  * Интерфейс с методами получения, добавления, изменения, удаления объявлений
+ *
  * @author Sayfullina Anna
  */
 public interface AdsService {
@@ -16,7 +17,7 @@ public interface AdsService {
 
     ExtendedAd getAds(int id, Authentication authentication);
 
-    ResponseEntity<Void> removeAd (int id, Authentication authentication);
+    ResponseEntity<Void> removeAd(int id, Authentication authentication);
 
     AdDTO updateAds(int id, CreateOrUpdateAd updateAd, Authentication authentication);
 
@@ -24,6 +25,6 @@ public interface AdsService {
 
     ImageAdDTO updateImage(int id, MultipartFile image, Authentication authentication);
 
-    byte [] getImage (String id);
+    byte[] getImage(String id);
 
 }

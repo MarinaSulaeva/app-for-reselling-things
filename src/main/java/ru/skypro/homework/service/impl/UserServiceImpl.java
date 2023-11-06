@@ -22,6 +22,7 @@ import java.util.Objects;
 
 /**
  * The class with methods for updating and getting user's account
+ *
  * @author Sulaeva Marina
  */
 @Service
@@ -48,6 +49,7 @@ public class UserServiceImpl implements UserService {
             throw new WrongCurrentPasswordException();
         }
     }
+
     /**
      * The method for getting information about user's account
      */
@@ -94,6 +96,7 @@ public class UserServiceImpl implements UserService {
         usersRepository.save(users);
         return ImageDTO.fromImage(returnImage);
     }
+
     /**
      * The method for getting image for user's account
      */
@@ -102,7 +105,6 @@ public class UserServiceImpl implements UserService {
         Image image = imageRepository.findById(id).orElseThrow();
         return image.getImage();
     }
-
 
 
 }

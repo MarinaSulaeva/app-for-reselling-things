@@ -11,6 +11,7 @@ import ru.skypro.homework.repository.UsersRepository;
 
 /**
  * The class with methods for working with authentication and creating a new user account
+ *
  * @author Sulaeva Marina
  */
 @Service

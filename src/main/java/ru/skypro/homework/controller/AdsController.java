@@ -17,6 +17,7 @@ import javax.validation.Valid;
 
 /**
  * Класс-контроллер для запуска эндпоинтов, относящихся к объявлениям
+ *
  * @author Sayfullina Anna
  */
 
@@ -29,58 +30,74 @@ public class AdsController {
 
     private final AdsService adsService;
 
-    /** Получение всех объявлений  */
+    /**
+     * Получение всех объявлений
+     */
     @GetMapping()
-    public Ads getAllAds(){
+    public Ads getAllAds() {
         return adsService.getAllAds();
     }
 
-    /** Добавление объявления */
+    /**
+     * Добавление объявления
+     */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdDTO> addAd(@RequestPart("properties") @Valid CreateOrUpdateAd properties,
-                       @RequestPart("image") MultipartFile image,
-                       Authentication authentication){
+                                       @RequestPart("image") MultipartFile image,
+                                       Authentication authentication) {
         return ResponseEntity.ok(adsService.addAd(properties, image, authentication));
     }
 
-    /** Получение информации об объявлении */
+    /**
+     * Получение информации об объявлении
+     */
     @GetMapping("/{id}")
     public ExtendedAd getAds(@PathVariable int id, Authentication authentication) {
         return adsService.getAds(id, authentication);
     }
 
-    /**  Удаление объявления */
+    /**
+     * Удаление объявления
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeAd (@PathVariable int id, Authentication authentication){
+    public ResponseEntity<Void> removeAd(@PathVariable int id, Authentication authentication) {
         return adsService.removeAd(id, authentication);
     }
 
-    /** Обновление информации об объявлении  */
+    /**
+     * Обновление информации об объявлении
+     */
     @PatchMapping("/{id}")
     public AdDTO updateAds(@PathVariable int id,
                            @RequestBody @Valid CreateOrUpdateAd updateAd,
-                           Authentication authentication){
+                           Authentication authentication) {
         return adsService.updateAds(id, updateAd, authentication);
     }
 
-    /** Получение объявлений авторизованного пользователя */
+    /**
+     * Получение объявлений авторизованного пользователя
+     */
     @GetMapping("/me")
-    public Ads getAdsMe(Authentication authentication){
+    public Ads getAdsMe(Authentication authentication) {
         return adsService.getAdsMe(authentication);
     }
 
-    /**    Обновление картинки объявления   */
+    /**
+     * Обновление картинки объявления
+     */
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte []> updateImage(@PathVariable int id,
-                              @RequestPart("image") MultipartFile image,
-                              Authentication authentication){
+    public ResponseEntity<byte[]> updateImage(@PathVariable int id,
+                                              @RequestPart("image") MultipartFile image,
+                                              Authentication authentication) {
         adsService.updateImage(id, image, authentication);
         return ResponseEntity.ok().build();
     }
 
-    /**    Получение картинки объявления   */
-    @GetMapping(value ="/{id}/image", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
-    public byte [] getImage(@PathVariable("id") String id) {
+    /**
+     * Получение картинки объявления
+     */
+    @GetMapping(value = "/{id}/image", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
+    public byte[] getImage(@PathVariable("id") String id) {
         return adsService.getImage(id);
     }
 

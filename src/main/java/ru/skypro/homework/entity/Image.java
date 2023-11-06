@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 /**
  * the class-entity for saving pictures from user's avatar
+ *
  * @author Sulaeva Marina
  */
 @Entity
@@ -20,5 +22,5 @@ public class Image {
     @Id
     private String id;
 
-    private byte [] image;
+    private byte[] image;
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Класс-обертка для получения списка объявлений и их количества
+ *
  * @author Sayfullina Anna
  */
 @Data

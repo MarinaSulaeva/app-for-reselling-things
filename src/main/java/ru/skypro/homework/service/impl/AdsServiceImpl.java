@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * Класс, содержащий методы получения, добавления, изменения, удаления объявлений
+ *
  * @author Sayfullina Anna
  * @author Морозова Светлана
  */
@@ -87,28 +88,28 @@ public class AdsServiceImpl implements AdsService {
 
         if (authentication.isAuthenticated()) {
 
-        String username = authentication.getName();
-        Users user = usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+            String username = authentication.getName();
+            Users user = usersRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 
-        Ad ad = properties.toAd();
-        ad.setUser(user);
-        ad = adsRepository.save(ad);
+            Ad ad = properties.toAd();
+            ad.setUser(user);
+            ad = adsRepository.save(ad);
 
-        ImageAd image = new ImageAd();
-        image.setId(ad.getPk().toString());
+            ImageAd image = new ImageAd();
+            image.setId(ad.getPk().toString());
 
-        try {
-            byte[] imageBytes = file.getBytes();
-            image.setImage(imageBytes);
-        } catch (IOException e) {
-            throw new RuntimeException();
-        }
-        ImageAd returnImage = imageAdRepository.save(image);
-        ad.setImage(returnImage);
+            try {
+                byte[] imageBytes = file.getBytes();
+                image.setImage(imageBytes);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            ImageAd returnImage = imageAdRepository.save(image);
+            ad.setImage(returnImage);
 
-        AdDTO adDTO = AdDTO.fromAd(adsRepository.save(ad));
+            AdDTO adDTO = AdDTO.fromAd(adsRepository.save(ad));
 
-        return adDTO;
+            return adDTO;
 
         } else {
             throw new AccessErrorException();
@@ -167,24 +168,24 @@ public class AdsServiceImpl implements AdsService {
         Ad ad = adsRepository.findAdByPk(id).orElseThrow(AdNotFoundException::new);
 
         if (isAdminOrOwnerAd(authentication, ad.getUser().getUsername())) {
-        ImageAd image;
-        if (!Objects.isNull(ad.getImage())) {
-            image = imageAdRepository.findById(ad.getImage().getId()).orElse(new ImageAd());
-        } else {
-            image = new ImageAd();
-            image.setId(ad.getPk().toString());
-        }
-        try {
-            byte[] imageBytes = file.getBytes();
-            image.setImage(imageBytes);
-        } catch (IOException e) {
-            throw new RuntimeException();
-        }
-        ImageAd returnImage = imageAdRepository.save(image);
-        ad.setImage(image);
-        adsRepository.save((ad));
+            ImageAd image;
+            if (!Objects.isNull(ad.getImage())) {
+                image = imageAdRepository.findById(ad.getImage().getId()).orElse(new ImageAd());
+            } else {
+                image = new ImageAd();
+                image.setId(ad.getPk().toString());
+            }
+            try {
+                byte[] imageBytes = file.getBytes();
+                image.setImage(imageBytes);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+            ImageAd returnImage = imageAdRepository.save(image);
+            ad.setImage(image);
+            adsRepository.save((ad));
 
-        return ImageAdDTO.fromImageAd(returnImage);
+            return ImageAdDTO.fromImageAd(returnImage);
 
         } else {
             throw new AccessErrorException();
@@ -192,7 +193,7 @@ public class AdsServiceImpl implements AdsService {
     }
 
     @Override
-    public byte [] getImage (String id){
+    public byte[] getImage(String id) {
         ImageAd image = imageAdRepository.findById(id).orElseThrow();
         return image.getImage();
     }

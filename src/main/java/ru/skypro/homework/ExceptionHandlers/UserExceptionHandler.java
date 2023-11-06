@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.skypro.homework.exceptions.UserNotFoundException;
 import ru.skypro.homework.exceptions.WrongCurrentPasswordException;
+
 /**
  * The class for handling exception for UserController
+ *
  * @author Sulaeva Marina
  */
 @ControllerAdvice

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.security.UserDetailsServiceImpl;
+
 /**
  * The class with methods to login and register users
  */

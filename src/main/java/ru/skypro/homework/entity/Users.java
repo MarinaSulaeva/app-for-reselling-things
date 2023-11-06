@@ -15,6 +15,7 @@ import javax.persistence.*;
 /**
  * The class-entity with user's data in database
  * Also this class uses in checking for authentication and authorization, implements UserDetails's class
+ *
  * @author Sulaeva Marina
  */
 @Data
