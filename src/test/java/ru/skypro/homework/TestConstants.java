@@ -45,12 +45,12 @@ public class TestConstants {
     public static final String IMAGE_USER2 = "user-icon.png";
     public static final String TITLE_AD1 = "advertisement1";
     public static final String TITLE_AD2 = "advertisement2";
-    public static final String DESCRIPTION1="description advertisement1";
-    public static final String DESCRIPTION2="description advertisement2";
+    public static final String DESCRIPTION1 = "description advertisement1";
+    public static final String DESCRIPTION2 = "description advertisement2";
     public static final int PRICE_AD1 = 1000;
     public static final int PRICE_AD2 = 2000;
-    public static final String IMAGE_AD1="";
-    public static final String IMAGE_AD2="";
+    public static final String IMAGE_AD1 = "";
+    public static final String IMAGE_AD2 = "";
     public static final LocalDateTime CREATED_AT_COMMENT1_FOR_AD1 = LocalDateTime.now().toLocalDate().atStartOfDay();
     public static final LocalDateTime CREATED_AT_COMMENT2_FOR_AD1 = LocalDateTime.now().toLocalDate().atStartOfDay();
     public static final LocalDateTime CREATED_AT_COMMENT3_FOR_AD1 = LocalDateTime.now().toLocalDate().atStartOfDay();

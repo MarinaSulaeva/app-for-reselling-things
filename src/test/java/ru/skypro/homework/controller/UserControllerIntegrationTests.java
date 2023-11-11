@@ -141,6 +141,7 @@ public class UserControllerIntegrationTests {
                         .content(newPassword.toString()))
                 .andExpect(status().isForbidden());
     }
+
     @Test
     public void setPassword_status_NotValid() throws Exception {
         addToDb();
@@ -247,7 +248,10 @@ public class UserControllerIntegrationTests {
         );
         MockMultipartHttpServletRequestBuilder patchMultipart = (MockMultipartHttpServletRequestBuilder)
                 MockMvcRequestBuilders.multipart("/users/me/image")
-                        .with(rq -> { rq.setMethod("PATCH"); return rq; });
+                        .with(rq -> {
+                            rq.setMethod("PATCH");
+                            return rq;
+                        });
         mockMvc.perform(patchMultipart
                         .file(file))
                 .andExpect(status().isOk());
@@ -264,7 +268,10 @@ public class UserControllerIntegrationTests {
         );
         MockMultipartHttpServletRequestBuilder patchMultipart = (MockMultipartHttpServletRequestBuilder)
                 MockMvcRequestBuilders.multipart("/users/me/image")
-                        .with(rq -> { rq.setMethod("PATCH"); return rq; });
+                        .with(rq -> {
+                            rq.setMethod("PATCH");
+                            return rq;
+                        });
         mockMvc.perform(patchMultipart
                         .file(file))
                 .andExpect(status().isUnauthorized());

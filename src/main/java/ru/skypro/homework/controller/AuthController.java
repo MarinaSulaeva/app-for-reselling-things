@@ -36,6 +36,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
     /**
      * The method for registration to user with checking input data
      */

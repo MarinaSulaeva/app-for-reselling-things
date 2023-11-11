@@ -15,6 +15,7 @@ import java.util.Optional;
 
 /**
  * This class uses in checking for authentication and authorization, implements UserDetails's class
+ *
  * @author Sulaeva Marina
  */
 @Data

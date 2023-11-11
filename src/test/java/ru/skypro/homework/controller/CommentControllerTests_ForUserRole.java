@@ -55,10 +55,15 @@ public class CommentControllerTests_ForUserRole {
     @Autowired
     private AdsRepository adsRepository;
 
+//    @Container
+//    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+//            .withUsername("postgres")
+//            .withPassword("postgres");
+
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
             .withUsername("postgres")
-            .withPassword("postgres");
+            .withPassword("73aberiv");
 
     @DynamicPropertySource
     static void postgresProperties(DynamicPropertyRegistry registry) {
@@ -192,7 +197,7 @@ public class CommentControllerTests_ForUserRole {
                 .andExpect(jsonPath("$.count").value(countCommentByAd2));
 
         //получение комментариев по несуществующему объявлению
-        mockMvc.perform(get("/ads/{id}/comments", adId2+1)
+        mockMvc.perform(get("/ads/{id}/comments", adId2 + 1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.count").value(0));
@@ -225,7 +230,7 @@ public class CommentControllerTests_ForUserRole {
         mockMvc.perform(get("/ads/{id}/comments", adId2)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(countCommentByAd2+1));
+                .andExpect(jsonPath("$.count").value(countCommentByAd2 + 1));
 
     }
 
@@ -270,7 +275,7 @@ public class CommentControllerTests_ForUserRole {
                 .andExpect(jsonPath("$.count").value(countCommentByAd2));
 
         //пробуем удалить существующий комментарий из объявления 2
-        mockMvc.perform(delete("/ads/{adId}/comments/{commentId}", adId2, lastCommentByAd2-2)
+        mockMvc.perform(delete("/ads/{adId}/comments/{commentId}", adId2, lastCommentByAd2 - 2)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isOk());
 
@@ -278,7 +283,7 @@ public class CommentControllerTests_ForUserRole {
         mockMvc.perform(get("/ads/{id}/comments", adId2)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(countCommentByAd2-1));
+                .andExpect(jsonPath("$.count").value(countCommentByAd2 - 1));
     }
 
     @Test
@@ -290,7 +295,7 @@ public class CommentControllerTests_ForUserRole {
         int lastCommentByAd2 = commentRepository.findLastCommentId(adId2);
 
         //пробуем удалить чужой комментарий из объявления 2
-        mockMvc.perform(delete("/ads/{adId}/comments/{commentId}", adId2, lastCommentByAd2-2)
+        mockMvc.perform(delete("/ads/{adId}/comments/{commentId}", adId2, lastCommentByAd2 - 2)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded))
                 .andExpect(status().isForbidden());
 
@@ -300,7 +305,7 @@ public class CommentControllerTests_ForUserRole {
     void updateComment() throws Exception {
         String base64Encoded = autorisationUser(USERNAME_USER1, PASSWORD_USER1);
 
-        int adId1 = commentRepository.findLastAdId()-1;
+        int adId1 = commentRepository.findLastAdId() - 1;
         int lastCommentByAd1 = commentRepository.findLastCommentId(adId1);
 
         JSONObject comment = new JSONObject();
@@ -314,7 +319,7 @@ public class CommentControllerTests_ForUserRole {
                 .andExpect(status().isOk());
 
         //пробуем изменить несуществующий комментарий из объявления 1
-        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1+1)
+        mockMvc.perform(patch("/ads/{adId}/comments/{commentId}", adId1, lastCommentByAd1 + 1)
                         .header(HttpHeaders.AUTHORIZATION, "Basic " + base64Encoded)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(comment.toString()))
@@ -322,11 +327,11 @@ public class CommentControllerTests_ForUserRole {
     }
 
     @Test
-     void updateComment_notValid() throws Exception {
+    void updateComment_notValid() throws Exception {
 
         String base64Encoded = autorisationUser(USERNAME_USER1, PASSWORD_USER1);
 
-        int adId1 = commentRepository.findLastAdId()-1;
+        int adId1 = commentRepository.findLastAdId() - 1;
         int lastCommentByAd1 = commentRepository.findLastCommentId(adId1);
 
         JSONObject commentMoreThan64 = new JSONObject();
@@ -352,7 +357,7 @@ public class CommentControllerTests_ForUserRole {
     void updateComment_userWithoutAccess() throws Exception {
         String base64Encoded = autorisationUser(USERNAME_USER2, PASSWORD_USER2);
 
-        int adId1 = commentRepository.findLastAdId()-1;
+        int adId1 = commentRepository.findLastAdId() - 1;
         int lastCommentByAd1 = commentRepository.findLastCommentId(adId1);
 
         JSONObject comment = new JSONObject();

@@ -16,6 +16,7 @@ import javax.validation.Valid;
 
 /**
  * Класс-контроллер для запуска эндпоинтов, относящихся к комментариям объявлений
+ *
  * @author Морозова Светлана
  */
 @Slf4j
@@ -34,8 +35,8 @@ public class CommentController {
      */
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity <Comments> getComments(@PathVariable("id") Integer adId,
-                                Authentication authentication) {
+    public ResponseEntity<Comments> getComments(@PathVariable("id") Integer adId,
+                                                Authentication authentication) {
         logger.info("get all comments");
         return ResponseEntity.ok(commentService.getComments(adId, authentication));
     }
@@ -45,9 +46,9 @@ public class CommentController {
      */
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity <CommentDTO> addComment(@PathVariable("id") Integer adId,
-                                                  @RequestBody @Valid CreateOrUpdateComment createOrUpdateComment,
-                                                  Authentication authentication) {
+    public ResponseEntity<CommentDTO> addComment(@PathVariable("id") Integer adId,
+                                                 @RequestBody @Valid CreateOrUpdateComment createOrUpdateComment,
+                                                 Authentication authentication) {
         logger.info("add new comment");
         return ResponseEntity.ok(commentService.addComment(adId, createOrUpdateComment, authentication));
     }
@@ -61,7 +62,7 @@ public class CommentController {
                               @PathVariable("commentId") Integer commentId,
                               Authentication authentication) {
         logger.info("delete comment");
-        commentService.deleteComment(adId,commentId, authentication);
+        commentService.deleteComment(adId, commentId, authentication);
     }
 
     /**
@@ -69,11 +70,11 @@ public class CommentController {
      */
     @PatchMapping("/{adId}/comments/{commentId}")
     public CommentDTO updateComment(@PathVariable("adId") Integer adId,
-                              @PathVariable("commentId") Integer commentId,
-                              @RequestBody @Valid CreateOrUpdateComment createOrUpdateComment,
-                              Authentication authentication) {
+                                    @PathVariable("commentId") Integer commentId,
+                                    @RequestBody @Valid CreateOrUpdateComment createOrUpdateComment,
+                                    Authentication authentication) {
         logger.info("update comment");
 
-        return commentService.updateComment(adId,commentId, createOrUpdateComment,authentication);
+        return commentService.updateComment(adId, commentId, createOrUpdateComment, authentication);
     }
 }
