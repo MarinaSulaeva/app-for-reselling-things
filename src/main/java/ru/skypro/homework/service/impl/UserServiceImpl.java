@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,8 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UsersRepository usersRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private ImageRepository imageRepository;
