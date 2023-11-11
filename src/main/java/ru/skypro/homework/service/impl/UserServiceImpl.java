@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UsersRepository usersRepository;
 
-    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private ImageRepository imageRepository;
